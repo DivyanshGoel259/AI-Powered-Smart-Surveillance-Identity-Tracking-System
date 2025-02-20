@@ -77,3 +77,15 @@ export enum VideoStatus {
   FAILED = "FAILED",
   QEUED = "QEUED",
 }
+
+
+export interface Target {
+  id:string
+  name:string
+  type:string,
+  images_url:string[]
+  createdAt:Date
+  updatedAt:Date
+  project_id:string
+  description:string
+}
