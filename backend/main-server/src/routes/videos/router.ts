@@ -4,7 +4,7 @@ import { authMiddleware } from "../../middlewares/authMiddleware";
 const videoRouter = Router();
 videoRouter.use(authMiddleware);
 
-videoRouter.post("/", controller.uploadVideo);
+videoRouter.post("/complete/:videoId", controller.uploadVideo);
 videoRouter.post("/presigned-url", controller.getPresignedUrl);
 
 export default videoRouter;

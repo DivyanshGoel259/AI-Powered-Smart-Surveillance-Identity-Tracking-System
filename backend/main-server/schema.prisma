@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model Users {
+  id        String    @id @default(uuid())
+  username  String    @unique
+  password  String
+  email     String    @unique
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  user        Users     @relation(fields: [user_id], references: [id])
+  user_id     String
+  report      Reports?  @relation(fields: [report_id], references: [id])
+  report_id   String?   @unique
+  name        String
+  description String
+  targets     Target[]
+  videos      Video[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Target {
+  id             String           @id @default(uuid())
+  name           String
+  type           String
+  description    String
+  images_url     String[]
+  projects       Project[]
+  suspectDetails SuspectDetails[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model Video {
+  id             String           @id @default(uuid())
+  name           String?
+  description    String?
+  status         VideoStatus?     @default(PENDING)
+  url            String
+  projects       Project[]
+  suspectDetails SuspectDetails[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model Reports {
+  id              String           @id @default(uuid())
+  status          ReportStatus     @default(PENDING)
+  project         Project?
+  suspectDetails  SuspectDetails[]
+}
+
+model SuspectDetails {
+  id         String   @id @default(uuid())
+  report     Reports  @relation(fields: [report_id], references: [id])
+  report_id  String
+  target     Target   @relation(fields: [target_id], references: [id])
+  target_id  String
+  video      Video    @relation(fields: [video_id], references: [id])
+  video_id   String
+  timestamps DateTime[]
+}
+
+enum VideoStatus {
+  PENDING
+  STARTED
+  FAILED
+  QEUED
+  UPLOADED
+}
+
+enum ReportStatus {
+  PENDING
+  STARTED
+  FAILED
+}
